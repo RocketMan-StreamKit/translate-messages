@@ -71,6 +71,18 @@ const defaultLang = (['en', 'ru', 'uk'] as const).includes(
 
 GenerateConfig([
   {
+    key: '_disclaimer',
+    type: 'info',
+    editor: {
+      description: {
+        en: 'Translation is powered by Google Translate. Translations may not be accurate.',
+        ru: 'Перевод выполняется через Google Translate. Перевод может быть неточным.',
+        uk: 'Переклад виконується через Google Translate. Переклад може бути неточним.',
+      },
+      infoBorder: 'yellow',
+    },
+  },
+  {
     key: 'targetLang',
     type: 'select',
     default: defaultLang,
@@ -169,7 +181,8 @@ function hasAlphaNum(text: string): boolean {
 
 function isOnlyEmojiOrEmote(
   text: string,
-  emotes?: DashboardChatEmote[]
+  emotes?: DashboardChatEmote[],
+  platform?: string
 ): boolean {
   const words = text.trim().split(/\s+/);
   if (words.length === 0) return true;
@@ -177,7 +190,7 @@ function isOnlyEmojiOrEmote(
   return words.every(w => {
     const wl = w.toLowerCase();
     if (emoteWords.has(wl)) return true;
-    if (_seventvEmotes?.has(wl)) return true;
+    if (platform === 'twitch' && _seventvEmotes?.has(wl)) return true;
     return !hasAlphaNum(w);
   });
 }
@@ -295,7 +308,7 @@ async function init(): Promise<void> {
 
       if (!textToTranslate) return;
 
-      if (isOnlyEmojiOrEmote(textToTranslate, payload.message.emotes)) return;
+      if (isOnlyEmojiOrEmote(textToTranslate, payload.message.emotes, payload.message.platform)) return;
 
       const langResult = await language.detect(textToTranslate);
       if (!langResult.success) return;
