@@ -25,4 +25,3 @@ await build({
   platform: 'neutral',
   format: 'iife',
 });
-
