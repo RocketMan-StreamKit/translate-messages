@@ -18,7 +18,6 @@
     "NETWORK_REQUEST",
     "DASHBOARD_CHAT_INCOMING",
     "DASHBOARD_CHAT_SEND",
-    "STATUS",
     "NOTIFY"
   ],
   "app_version": "1.0.30"

@@ -32,7 +32,6 @@ Automatically translates chat messages and sends the translated version back to 
 - `NETWORK_REQUEST` — Google Translate API calls
 - `DASHBOARD_CHAT_INCOMING` — receive incoming chat messages
 - `DASHBOARD_CHAT_SEND` — send translated messages to platform chats
-- `STATUS` — status bar indicator
 - `NOTIFY` — in-app notifications
 
 ## Development

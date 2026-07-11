@@ -266,11 +266,6 @@ async function init(): Promise<void> {
   fetchSeventvEmotes();
   setInterval(fetchSeventvEmotes, 5 * 60 * 1000);
 
-  status.Update({
-    current: 'online',
-    message: { en: 'Translate addon active' },
-  });
-
   await dashboard.onChatMessage(async payload => {
     try {
       if (!payload.sourceAddonId) return;
