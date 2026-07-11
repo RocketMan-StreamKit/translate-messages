@@ -70,11 +70,12 @@ const defaultLang = (['en', 'ru', 'uk'] as const).includes(
   ? LANG.current
   : 'en';
 
-const defaultTemplate = LANG.current === 'ru'
-  ? 'Перевод сообщения {name}: {message}'
-  : LANG.current === 'uk'
-  ? 'Переклад повідомлення {name}: {message}'
-  : 'Translation of {name}: {message}';
+const defaultTemplate =
+  LANG.current === 'ru'
+    ? 'Перевод сообщения {name}: {message}'
+    : LANG.current === 'uk'
+      ? 'Переклад повідомлення {name}: {message}'
+      : 'Translation of {name}: {message}';
 
 GenerateConfig([
   {
@@ -332,7 +333,14 @@ async function init(): Promise<void> {
 
       if (!textToTranslate) return;
 
-      if (isOnlyEmojiOrEmote(textToTranslate, payload.message.emotes, payload.message.platform)) return;
+      if (
+        isOnlyEmojiOrEmote(
+          textToTranslate,
+          payload.message.emotes,
+          payload.message.platform
+        )
+      )
+        return;
 
       const langResult = await language.detect(textToTranslate);
       if (!langResult.success) return;
