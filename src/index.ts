@@ -157,12 +157,65 @@ function isSameLanguage(detected: string, target: string): boolean {
   return false;
 }
 
-function isOnlyEmoji(text: string): boolean {
+let _seventvEmotes: Set<string> | null = null;
+
+function hasAlphaNum(text: string): boolean {
   try {
-    return !/[\p{L}\p{N}]/u.test(text);
+    return /[\p{L}\p{N}]/u.test(text);
   } catch {
-    return !/[a-zA-Z0-9]/.test(text);
+    return /[a-zA-Z0-9]/.test(text);
   }
+}
+
+function isOnlyEmojiOrEmote(
+  text: string,
+  emotes?: DashboardChatEmote[]
+): boolean {
+  const words = text.trim().split(/\s+/);
+  if (words.length === 0) return true;
+  const emoteWords = new Set((emotes || []).map(e => e.word.toLowerCase()));
+  return words.every(w => {
+    const wl = w.toLowerCase();
+    if (emoteWords.has(wl)) return true;
+    if (_seventvEmotes?.has(wl)) return true;
+    return !hasAlphaNum(w);
+  });
+}
+
+async function fetchSeventvEmotes(): Promise<void> {
+  try {
+    const info = await addons.getInfo(['7tv']);
+    if (!info.success) {
+      _seventvEmotes = null;
+      return;
+    }
+    const seventv = info.addons[0];
+    if (!seventv?.enabled) {
+      _seventvEmotes = null;
+      return;
+    }
+    const res = await addons.request('7tv', 'getEmotes');
+    if (res?.success && res.result) {
+      const emotes: { word: string }[] =
+        (res.result as { emotes: { word: string }[] }).emotes || [];
+      _seventvEmotes = new Set(emotes.map(e => e.word.toLowerCase()));
+      const cache = storage.Read<CacheMap>() || {};
+      cache['_7tv_words'] = JSON.stringify([..._seventvEmotes]);
+      storage.Write(cache);
+    }
+  } catch (err) {
+    console.error('Failed to fetch 7tv emotes:', err);
+  }
+}
+
+function loadSeventvFromCache(): void {
+  try {
+    const cache = storage.Read<CacheMap>() || {};
+    const raw = cache['_7tv_words'];
+    if (raw) {
+      _seventvEmotes = new Set(JSON.parse(raw));
+    }
+  } catch {}
 }
 
 function getContentString(
@@ -209,6 +262,10 @@ async function translateText(
 async function init(): Promise<void> {
   const params = await api.config.getParams<AddonParams>();
 
+  loadSeventvFromCache();
+  fetchSeventvEmotes();
+  setInterval(fetchSeventvEmotes, 5 * 60 * 1000);
+
   status.Update({
     current: 'online',
     message: { en: 'Translate addon active' },
@@ -234,14 +291,16 @@ async function init(): Promise<void> {
       } else {
         if (messageText.startsWith(prefix)) {
           textToTranslate = messageText.slice(prefix.length).trim();
-        } else if (autoUsers.some((u) => u.toLowerCase() === userName.toLowerCase())) {
+        } else if (
+          autoUsers.some(u => u.toLowerCase() === userName.toLowerCase())
+        ) {
           textToTranslate = messageText;
         }
       }
 
       if (!textToTranslate) return;
 
-      if (isOnlyEmoji(textToTranslate)) return;
+      if (isOnlyEmojiOrEmote(textToTranslate, payload.message.emotes)) return;
 
       const langResult = await language.detect(textToTranslate);
       if (!langResult.success) return;
