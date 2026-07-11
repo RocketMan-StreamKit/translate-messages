@@ -40,11 +40,27 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
 
+      - name: Check if release already exists
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.versions.outputs.version }}"
+          TAG="v${VERSION}"
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release ${TAG} already exists, skipping."
+            echo "should_release=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "No release for ${TAG}, build required."
+            echo "should_release=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Ensure release does not exist yet
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          if gh release view "${{ steps.manifest.outputs.tag }}" >/dev/null 2>&1; then
+          if [ "${{ steps.check.outputs.should_release }}" = "false" ]; then
             echo "Release ${{ steps.manifest.outputs.tag }} already exists for version ${{ steps.manifest.outputs.version }}."
             exit 1
           fi
