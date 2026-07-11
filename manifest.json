@@ -1,10 +1,14 @@
 {
   "id": "translate-messages",
   "name": {
-    "en": "My StreamKit Addon"
+    "en": "Auto Translate Messages",
+    "ru": "Автоперевод сообщений",
+    "uk": "Автопереклад повідомлень"
   },
   "description": {
-    "en": "Integration addon for StreamKit+."
+    "en": "Automatically translates chat messages and sends the translated version to the chat. Supports automatic and command-based modes.",
+    "ru": "Автоматически переводит сообщения в чате и отправляет переведённый вариант. Поддерживает автоматический и командный режимы.",
+    "uk": "Автоматично перекладає повідомлення в чаті та надсилає перекладений варіант. Підтримує автоматичний і командний режими."
   },
   "type": "platform.streaming",
   "version": "1.0.0",
@@ -12,12 +16,10 @@
   "icon": "logo.png",
   "permissions": [
     "NETWORK_REQUEST",
-    "NETWORK_WEBSOCKET",
-    "WEB_END_POINTS",
-    "DASHBOARD_EVENTS",
-    "DASHBOARD_CHAT",
+    "DASHBOARD_CHAT_INCOMING",
+    "DASHBOARD_CHAT_SEND",
     "STATUS",
     "NOTIFY"
   ],
-  "app_version": "1.0.28"
+  "app_version": "1.0.30"
 }

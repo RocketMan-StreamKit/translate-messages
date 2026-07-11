@@ -1,30 +1,45 @@
-# My StreamKit Addon
+# Auto Translate Messages
 
-Integration addon for StreamKit+.
+Automatically translates chat messages and sends the translated version back to the chat.
 
 - **Addon id:** `translate-messages`
 - **Type:** `platform.streaming`
-- **Minimum StreamKit+:** `1.0.28`
+- **Minimum StreamKit+:** `1.0.30`
 
+## Features
+
+- Detects message language using built-in fastText
+- Translates via Google Translate (no API key required)
+- Two modes:
+  - **Automatic** — translates every message from a different language
+  - **By command** — translates only messages starting with a configurable prefix (default `!translate `), with optional auto-translate for specific usernames
+- Skips emoji-only messages
+- Skips messages already in the target language
+- Caches translations to reduce API calls
+- Sends translated messages to the same platform chat
+
+## Settings
+
+| Field | Description |
+| --- | --- |
+| Target language | Language to translate into (25 languages) |
+| Mode | Automatic or by command |
+| Command prefix | Prefix for command mode (default `!translate`) |
+| Auto-translate users | Usernames whose messages auto-translate without prefix in command mode |
+
+## Permissions
+
+- `NETWORK_REQUEST` — Google Translate API calls
+- `DASHBOARD_CHAT_INCOMING` — receive incoming chat messages
+- `DASHBOARD_CHAT_SEND` — send translated messages to platform chats
+- `STATUS` — status bar indicator
+- `NOTIFY` — in-app notifications
 
 ## Development
-
-1. Open **Settings** in StreamKit+ and install this folder.
-2. Approve the requested permissions.
-3. Enable the addon and configure settings.
-
-
-## Build
 
 ```bash
 npm install
 npm run build
 ```
 
-Install the `dist/` folder in StreamKit+ (contains `manifest.json`, worker, and assets).
-
-## Release
-
-This project uses a `REPO`-only addon id, so it is intended for **local development only** and cannot be published to the RocketMan catalog. You can still use the release workflow to build GitHub Release assets for personal distribution.
-
-Docs: [StreamKit+ addon developer docs](https://rocketman-streamkit.github.io/types/)
+Install the `dist/` folder in StreamKit+ (Settings → Addons → Install folder).
