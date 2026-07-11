@@ -1,0 +1,15 @@
+{
+  "name": "translate-messages",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Integration addon for StreamKit+.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@rocketman-streamkit/types": "^1.0.29",
+    "esbuild": "^0.25.5",
+    "typescript": "^5.8.3"
+  }
+}

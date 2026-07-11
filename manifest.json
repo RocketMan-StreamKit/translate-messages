@@ -1,0 +1,23 @@
+{
+  "id": "translate-messages",
+  "name": {
+    "en": "My StreamKit Addon"
+  },
+  "description": {
+    "en": "Integration addon for StreamKit+."
+  },
+  "type": "platform.streaming",
+  "version": "1.0.0",
+  "author": "RocketMan System",
+  "icon": "logo.png",
+  "permissions": [
+    "NETWORK_REQUEST",
+    "NETWORK_WEBSOCKET",
+    "WEB_END_POINTS",
+    "DASHBOARD_EVENTS",
+    "DASHBOARD_CHAT",
+    "STATUS",
+    "NOTIFY"
+  ],
+  "app_version": "1.0.28"
+}
