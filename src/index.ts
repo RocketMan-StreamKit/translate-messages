@@ -3,6 +3,7 @@ interface AddonParams {
   mode: 'auto' | 'command';
   prefix: string;
   autoUsers: string[];
+  template: string;
 }
 
 type CacheMap = Record<string, string>;
@@ -68,6 +69,12 @@ const defaultLang = (['en', 'ru', 'uk'] as const).includes(
 )
   ? LANG.current
   : 'en';
+
+const defaultTemplate = LANG.current === 'ru'
+  ? 'Перевод сообщения {name}: {message}'
+  : LANG.current === 'uk'
+  ? 'Переклад повідомлення {name}: {message}'
+  : 'Translation of {name}: {message}';
 
 GenerateConfig([
   {
@@ -155,6 +162,23 @@ GenerateConfig([
         en: 'In command mode, messages from these usernames are auto-translated without the prefix',
         ru: 'В режиме по команде, сообщения от этих пользователей переводятся без префикса',
         uk: 'У режимі за командою, повідомлення від цих користувачів перекладаються без префікса',
+      },
+    },
+  },
+  {
+    key: 'template',
+    type: 'text',
+    default: defaultTemplate,
+    editor: {
+      label: {
+        en: 'Message template',
+        ru: 'Шаблон сообщения',
+        uk: 'Шаблон повідомлення',
+      },
+      description: {
+        en: 'Available variables: {name}, {message}, {source}',
+        ru: 'Доступные переменные: {name}, {message}, {source}',
+        uk: 'Доступні змінні: {name}, {message}, {source}',
       },
     },
   },
@@ -319,7 +343,10 @@ async function init(): Promise<void> {
       if (!translated) return;
       if (translated === textToTranslate) return;
 
-      const output = `Translate from ${userName}: ${translated}`;
+      const output = currentParams.template
+        .replace(/\{name\}/g, userName)
+        .replace(/\{message\}/g, translated)
+        .replace(/\{source\}/g, textToTranslate);
       await dashboard.sendChatMessage(output, [payload.sourceAddonId]);
     } catch (err) {
       console.error('Error processing chat message:', err);
