@@ -3,6 +3,7 @@ interface AddonParams {
   mode: 'auto' | 'command';
   prefix: string;
   autoUsers: string[];
+  ignoreChatCommands: boolean;
   template: string;
 }
 
@@ -167,6 +168,23 @@ GenerateConfig([
     },
   },
   {
+    key: 'ignoreChatCommands',
+    type: 'boolean',
+    default: true,
+    editor: {
+      label: {
+        en: 'Ignore chat commands',
+        ru: 'Игнорировать чат команды',
+        uk: 'Ігнорувати чат команди',
+      },
+      description: {
+        en: 'Skip translation of messages that start with "!" and contain only one word. This allows excluding chat commands from translation.',
+        ru: 'Пропускать перевод сообщений, начинающихся с "!" и содержащих только одно слово. Это позволяет исключить перевод чат команд.',
+        uk: 'Пропускати переклад повідомлень, що починаються з "!" та містять лише одне слово. Це дозволяє виключити переклад чат команд.',
+      },
+    },
+  },
+  {
     key: 'template',
     type: 'text',
     default: defaultTemplate,
@@ -315,7 +333,13 @@ async function init(): Promise<void> {
       const userName = payload.user?.name || 'Unknown';
 
       const currentParams = await api.config.getParams<AddonParams>();
-      const { targetLang, mode, prefix, autoUsers } = currentParams;
+      const { targetLang, mode, prefix, autoUsers, ignoreChatCommands } =
+        currentParams;
+
+      if (ignoreChatCommands && messageText.startsWith('!')) {
+        const afterBang = messageText.slice(1).trim();
+        if (afterBang && !/\s/.test(afterBang)) return;
+      }
 
       let textToTranslate: string | null = null;
 
