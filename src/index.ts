@@ -4,6 +4,7 @@ interface AddonParams {
   prefix: string;
   autoUsers: string[];
   ignoreChatCommands: boolean;
+  translateSystemMessages: boolean;
   template: string;
 }
 
@@ -185,6 +186,23 @@ GenerateConfig([
     },
   },
   {
+    key: 'translateSystemMessages',
+    type: 'boolean',
+    default: false,
+    editor: {
+      label: {
+        en: 'Translate system messages',
+        ru: 'Переводить системные сообщения',
+        uk: 'Перекладати системні повідомлення',
+      },
+      description: {
+        en: 'When enabled, system messages (marked with system: true) will also be translated. Disabled by default.',
+        ru: 'При включении системные сообщения (с пометкой system: true) также будут переводиться. По умолчанию выключено.',
+        uk: 'При увімкненні системні повідомлення (з позначкою system: true) також будуть перекладатися. За замовчуванням вимкнено.',
+      },
+    },
+  },
+  {
     key: 'template',
     type: 'text',
     default: defaultTemplate,
@@ -333,8 +351,10 @@ async function init(): Promise<void> {
       const userName = payload.user?.name || 'Unknown';
 
       const currentParams = await api.config.getParams<AddonParams>();
-      const { targetLang, mode, prefix, autoUsers, ignoreChatCommands } =
+      const { targetLang, mode, prefix, autoUsers, ignoreChatCommands, translateSystemMessages } =
         currentParams;
+
+      if (!translateSystemMessages && payload.message.system) return;
 
       if (ignoreChatCommands && messageText.startsWith('!')) {
         const afterBang = messageText.slice(1).trim();
