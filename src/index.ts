@@ -351,8 +351,14 @@ async function init(): Promise<void> {
       const userName = payload.user?.name || 'Unknown';
 
       const currentParams = await api.config.getParams<AddonParams>();
-      const { targetLang, mode, prefix, autoUsers, ignoreChatCommands, translateSystemMessages } =
-        currentParams;
+      const {
+        targetLang,
+        mode,
+        prefix,
+        autoUsers,
+        ignoreChatCommands,
+        translateSystemMessages,
+      } = currentParams;
 
       if (!translateSystemMessages && payload.message.system) return;
 
