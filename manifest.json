@@ -11,14 +11,15 @@
     "uk": "Автоматично перекладає повідомлення в чаті та надсилає перекладений варіант. Підтримує автоматичний і командний режими."
   },
   "type": "platform.streaming",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "author": "RocketMan System",
   "icon": "logo.png",
   "permissions": [
     "NETWORK_REQUEST",
     "DASHBOARD_CHAT_INCOMING",
     "DASHBOARD_CHAT_SEND",
-    "NOTIFY"
+    "NOTIFY",
+    "LLM"
   ],
   "app_version": "1.0.42"
 }
